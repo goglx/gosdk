@@ -8,30 +8,31 @@ import (
 )
 
 func TestNewProvider(t *testing.T) {
-	t.Run("S3", func(t *testing.T) {
-		provider, err := storage.NewProvider(types.S3)
+	tests := []struct {
+		name types.ProviderType
+	}{
+		{
+			name: types.S3,
+		},
+		{
+			name: types.R2,
+		},
+		{
+			name: types.GCS,
+		},
+		{
+			name: types.Local,
+		},
+	}
 
-		sdktesting.IsNull(t, err)
-		sdktesting.IsNotNull(t, provider)
-	})
-	t.Run("r2", func(t *testing.T) {
-		provider, err := storage.NewProvider(types.R2)
+	for _, tt := range tests {
+		t.Run(string(tt.name), func(t *testing.T) {
+			provider, err := storage.NewProvider(tt.name)
+			sdktesting.IsNull(t, err)
+			sdktesting.IsNotNull(t, provider)
+		})
+	}
 
-		sdktesting.IsNull(t, err)
-		sdktesting.IsNotNull(t, provider)
-	})
-	t.Run("gcs", func(t *testing.T) {
-		provider, err := storage.NewProvider(types.GCS)
-
-		sdktesting.IsNull(t, err)
-		sdktesting.IsNotNull(t, provider)
-	})
-	t.Run("local", func(t *testing.T) {
-		provider, err := storage.NewProvider(types.Local)
-
-		sdktesting.IsNull(t, err)
-		sdktesting.IsNotNull(t, provider)
-	})
 	t.Run("invalid", func(t *testing.T) {
 		_, err := storage.NewProvider("wrong")
 		sdktesting.IsNotNull(t, err)
