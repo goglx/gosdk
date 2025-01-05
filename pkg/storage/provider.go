@@ -2,13 +2,15 @@ package storage
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"gosdk/internal/types"
 	"gosdk/pkg/storage/gcs"
 	"gosdk/pkg/storage/local"
 	"gosdk/pkg/storage/r2"
 	"gosdk/pkg/storage/s3"
 )
+
+var errUnsupportedProviderType = errors.New("unsupported provider type")
 
 type Provider interface {
 	Upload(ctx context.Context, file *types.File) (*types.File, error)
@@ -27,6 +29,6 @@ func NewProvider(providerType types.ProviderType) (Provider, error) {
 	case types.Local:
 		return local.NewProvider()
 	default:
-		return nil, fmt.Errorf("unsupported provider type: %s", providerType)
+		return nil, errUnsupportedProviderType
 	}
 }

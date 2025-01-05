@@ -2,20 +2,19 @@ package s3
 
 import (
 	"context"
-	"fmt"
 	"gosdk/internal/types"
 	"os"
 )
 
-type provider struct {
+type Provider struct {
 	bucket    string
 	accessKey string
 	secretKey string
 	region    string
 }
 
-func NewProvider() (*provider, error) {
-	return &provider{
+func NewProvider() (*Provider, error) {
+	return &Provider{
 		bucket:    os.Getenv("BUCKET_NAME"),
 		region:    os.Getenv("S3_REGION"),
 		accessKey: os.Getenv("S3_ACCESS_KEY"),
@@ -23,18 +22,17 @@ func NewProvider() (*provider, error) {
 	}, nil
 }
 
-func (p *provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
-	//TODO implement me
-	fmt.Println(file)
+func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (p *provider) Download(ctx context.Context, key string) ([]byte, error) {
-	//TODO implement me
+func (p *Provider) Download(ctx context.Context, key string) ([]byte, error) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (p *provider) Delete(ctx context.Context, key string) error {
-	//TODO implement me
+func (p *Provider) Delete(ctx context.Context, key string) error {
+	// TODO implement me
 	panic("implement me")
 }

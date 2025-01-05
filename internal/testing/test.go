@@ -7,18 +7,24 @@ import (
 )
 
 func Ok(t *testing.T, got string, want string) {
+	t.Helper()
+
 	if got != want {
 		t.Errorf("got %q, wanted %q", got, want)
 	}
 }
 
 func Equals(t *testing.T, got interface{}, want interface{}) {
+	t.Helper()
+
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %q, wanted %q", got, want)
 	}
 }
 
 func Match(t *testing.T, got string, want string) {
+	t.Helper()
+
 	m, _ := regexp.MatchString(want, got)
 
 	if !m {
@@ -27,12 +33,16 @@ func Match(t *testing.T, got string, want string) {
 }
 
 func IsNull(t *testing.T, got interface{}) {
+	t.Helper()
+
 	if got != nil {
 		t.Errorf("expected nil but got %v", got)
 	}
 }
 
 func IsNotNull(t *testing.T, got interface{}) {
+	t.Helper()
+
 	if got == nil {
 		t.Errorf("expected not nil but got %v", got)
 	}

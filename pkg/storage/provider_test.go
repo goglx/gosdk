@@ -8,6 +8,8 @@ import (
 )
 
 func TestNewProvider(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name types.ProviderType
 		want bool
@@ -38,18 +40,20 @@ func TestNewProvider(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(string(tt.name), func(t *testing.T) {
-			provider, err := storage.NewProvider(tt.name)
+	for _, testCase := range tests {
+		t.Run(string(testCase.name), func(t *testing.T) {
+			t.Parallel()
 
-			if tt.want {
+			provider, err := storage.NewProvider(testCase.name)
+
+			if testCase.want {
 				sdktesting.IsNull(t, err)
 				sdktesting.IsNotNull(t, provider)
 			}
 
-			if !tt.want {
+			if !testCase.want {
 				sdktesting.IsNotNull(t, err)
-				sdktesting.Ok(t, err.Error(), "unsupported provider type: wrong")
+				sdktesting.Ok(t, err.Error(), "unsupported provider type")
 			}
 		})
 	}
