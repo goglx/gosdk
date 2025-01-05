@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
 	"gosdk/internal/types"
 	"gosdk/pkg/storage/gcs"
 	"gosdk/pkg/storage/local"
@@ -21,13 +22,33 @@ type Provider interface {
 func NewProvider(providerType types.ProviderType) (Provider, error) {
 	switch providerType {
 	case types.S3:
-		return s3.NewProvider()
+		provider, err := s3.NewProvider()
+		if err != nil {
+			return nil, fmt.Errorf("failed to create s3 provider: %w", err)
+		}
+
+		return provider, nil
 	case types.R2:
-		return r2.NewProvider()
+		provider, err := r2.NewProvider()
+		if err != nil {
+			return nil, fmt.Errorf("failed to create r2 provider: %w", err)
+		}
+
+		return provider, nil
 	case types.GCS:
-		return gcs.NewProvider()
+		provider, err := gcs.NewProvider()
+		if err != nil {
+			return nil, fmt.Errorf("failed to create gcs provider: %w", err)
+		}
+
+		return provider, nil
 	case types.Local:
-		return local.NewProvider()
+		provider, err := local.NewProvider()
+		if err != nil {
+			return nil, fmt.Errorf("failed to create local provider: %w", err)
+		}
+
+		return provider, nil
 	default:
 		return nil, errUnsupportedProviderType
 	}
