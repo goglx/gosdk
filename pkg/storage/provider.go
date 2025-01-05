@@ -1,10 +1,26 @@
 package storage
 
-type Provider string
+import (
+	"context"
+)
+
+type ProviderType string
 
 const (
-	S3    Provider = "s3"
-	R2    Provider = "r2"
-	GCS   Provider = "gcs"
-	Local Provider = "local"
+	S3    ProviderType = "s3"
+	R2    ProviderType = "r2"
+	GCS   ProviderType = "gcs"
+	Local ProviderType = "local"
 )
+
+type Provider interface {
+	Upload(ctx context.Context, file *File) (*File, error)
+	Download(ctx context.Context, key string) ([]byte, error)
+	Delete(ctx context.Context, key string) error
+}
+
+type File struct {
+	Id          string `json:"id"`
+	ContentType string `json:"content_type"`
+	Data        []byte `json:"data"`
+}
