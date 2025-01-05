@@ -10,30 +10,21 @@ import (
 	"gosdk/pkg/storage/s3"
 )
 
-type ProviderType string
-
-const (
-	S3    ProviderType = "s3"
-	R2    ProviderType = "r2"
-	GCS   ProviderType = "gcs"
-	Local ProviderType = "local"
-)
-
 type Provider interface {
 	Upload(ctx context.Context, file *types.File) (*types.File, error)
 	Download(ctx context.Context, key string) ([]byte, error)
 	Delete(ctx context.Context, key string) error
 }
 
-func NewProvider(providerType ProviderType) (Provider, error) {
+func NewProvider(providerType types.ProviderType) (Provider, error) {
 	switch providerType {
-	case S3:
+	case types.S3:
 		return s3.NewProvider()
-	case R2:
+	case types.R2:
 		return r2.NewProvider()
-	case GCS:
+	case types.GCS:
 		return gcs.NewProvider()
-	case Local:
+	case types.Local:
 		return local.NewProvider()
 	default:
 		return nil, fmt.Errorf("unsupported provider type: %s", providerType)
