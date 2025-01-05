@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 	fmt.Println("gosdk")
 	s3.Debug()
 }
