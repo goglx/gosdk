@@ -2,8 +2,9 @@ package r2
 
 import (
 	"context"
-	"gosdk/internal/types"
 	"os"
+
+	"gosdk/internal/types"
 )
 
 type Provider struct {

@@ -2,8 +2,9 @@ package s3
 
 import (
 	"context"
-	"gosdk/internal/types"
 	"os"
+
+	"gosdk/internal/types"
 )
 
 type Provider struct {
@@ -24,7 +25,7 @@ func NewProvider() (*Provider, error) {
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
 	// TODO implement me
-	panic("implement me")
+	panic(debug())
 }
 
 func (p *Provider) Download(ctx context.Context, key string) ([]byte, error) {

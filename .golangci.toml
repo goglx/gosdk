@@ -5,5 +5,16 @@ line-length = 120
 enable-all = true
 disable = [
     "exportloopref",
-    "godox"
+    "godox",
+    "gofumpt"
+]
+
+[linters-settings.revive.rules]
+name = "var-naming"
+severity = "warning"
+disabled = true
+exclude = [""]
+arguments = [
+    ["ID"],     # AllowList
+    [{ upperCaseConst = true }]  # Extra parameter
 ]

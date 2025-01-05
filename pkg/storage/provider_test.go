@@ -1,10 +1,11 @@
 package storage_test
 
 import (
+	"testing"
+
 	sdktesting "gosdk/internal/testing"
 	"gosdk/internal/types"
 	"gosdk/pkg/storage"
-	"testing"
 )
 
 func TestNewProvider(t *testing.T) {
