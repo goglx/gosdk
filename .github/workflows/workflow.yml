@@ -1,0 +1,12 @@
+name: Workflow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - release
+
+jobs:
+  go:
+    uses: ./.github/workflows/go.yml
