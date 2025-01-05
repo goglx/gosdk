@@ -1,7 +1,7 @@
 package types
 
 type File struct {
-	Id          string `json:"id"`
+	ID          string `json:"id"`
 	ContentType string `json:"contentType"`
 	Data        []byte `json:"data"`
 }
