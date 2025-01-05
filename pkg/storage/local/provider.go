@@ -1,26 +1,15 @@
-package s3
+package local
 
 import (
 	"context"
 	"fmt"
 	"gosdk/internal/types"
-	"os"
 )
 
-type provider struct {
-	bucket    string
-	accessKey string
-	secretKey string
-	region    string
-}
+type provider struct{}
 
 func NewProvider() (*provider, error) {
-	return &provider{
-		bucket:    os.Getenv("BUCKET_NAME"),
-		region:    os.Getenv("S3_REGION"),
-		accessKey: os.Getenv("S3_ACCESS_KEY"),
-		secretKey: os.Getenv("S3_SECRET_KEY"),
-	}, nil
+	return &provider{}, nil
 }
 
 func (p *provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
