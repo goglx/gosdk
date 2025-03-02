@@ -9,4 +9,4 @@ on:
 
 jobs:
   go:
-    uses: ./.github/workflows/go.yml
+    uses: ./.github/workflows/test.yml
