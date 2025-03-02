@@ -8,5 +8,5 @@ on:
       - release
 
 jobs:
-  go:
+  test:
     uses: ./.github/workflows/test.yml
