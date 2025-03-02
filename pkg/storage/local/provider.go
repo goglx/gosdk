@@ -2,6 +2,7 @@ package local
 
 import (
 	"context"
+	"fmt"
 
 	"gosdk/internal/types"
 )
@@ -9,7 +10,7 @@ import (
 type Provider struct{}
 
 func NewProvider() (*Provider, error) {
-	return &Provider{}, nil
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
