@@ -14,34 +14,7 @@ import (
 
 var errInvalidFileName = errors.New("invalid file name")
 
-type mockFileSystem struct {
-	mkdirAllFunc func(path string, perm os.FileMode) error
-	createFunc   func(name string) (*os.File, error)
-}
-
-func (fs *mockFileSystem) MkdirAll(path string, perm os.FileMode) error {
-	return fs.mkdirAllFunc(path, perm)
-}
-
-func (fs *mockFileSystem) Create(name string) (*os.File, error) {
-	return fs.createFunc(name)
-}
-
-type mockConfig struct {
-	LocalPath string
-}
-
-func mockNewConfig() *mockConfig {
-	return &mockConfig{
-		LocalPath: "test",
-	}
-}
-
-func mockNewProvider(config *mockConfig, fs *mockFileSystem) *local.Provider {
-	return &local.Provider{Config: (*local.Config)(config), FS: fs}
-}
-
-func TestUpload(t *testing.T) {
+func TestUpload_OK(t *testing.T) {
 	t.Parallel()
 
 	mockFS := &mockFileSystem{
@@ -52,7 +25,6 @@ func TestUpload(t *testing.T) {
 
 			return nil
 		},
-
 		createFunc: func(name string) (*os.File, error) {
 			if name != "test/test-id" {
 				return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
@@ -72,4 +44,37 @@ func TestUpload(t *testing.T) {
 	sdktesting.IsNull(t, err)
 	sdktesting.IsNotNull(t, upload)
 	sdktesting.Equals(t, upload.ID, "test-id")
+
+}
+
+func TestNewProvider(t *testing.T) {
+	t.Run("ok", func(t *testing.T) {
+		t.Setenv("LOCAL_PATH", "/tmp")
+
+		localProvider, err := local.NewProvider()
+
+		sdktesting.IsNull(t, err)
+		sdktesting.IsNotNull(t, localProvider)
+	})
+
+	t.Run("failed", func(t *testing.T) {
+		t.Setenv("LOCAL_PATH", "")
+
+		expectedMsg := "missing env LOCAL_PATH"
+
+		defer func() {
+			rec := recover()
+
+			if rec == nil {
+				t.Error("expected panic but got none")
+			}
+
+			if msg, ok := rec.(string); !ok || msg != expectedMsg {
+				t.Errorf("expected panic message %q but got %v", expectedMsg, rec)
+			}
+		}()
+
+		_, err := local.NewProvider()
+		sdktesting.IsNotNull(t, err)
+	})
 }
