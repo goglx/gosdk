@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"gosdk/internal/types"
 	"gosdk/pkg/storage/gcs"
@@ -14,58 +13,52 @@ import (
 
 var errUnsupportedProviderType = errors.New("unsupported provider type")
 
-type Provider interface {
-	Upload(ctx context.Context, file *types.File) (*types.File, error)
-	Download(ctx context.Context, key string) ([]byte, error)
-	Delete(ctx context.Context, key string) error
+type Provider struct {
+	Upload   Upload
+	Download Download
+	Delete   Delete
+	provider types.ProviderType
 }
 
-type ProviderManager struct {
-	provider Provider
-}
+type Upload func(ctx context.Context, file *types.File) (*types.File, error)
+type Download func(ctx context.Context, key string) ([]byte, error)
+type Delete func(ctx context.Context, key string) error
 
-func NewProviderManager(providerType types.ProviderType) (*ProviderManager, error) {
-	var provider Provider
-
-	var err error
-
+func NewProvider(providerType types.ProviderType) (*Provider, error) {
 	switch providerType {
 	case types.S3:
-		provider, err = s3.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create s3 provider: %w", err)
-		}
+		return &Provider{
+			Upload:   s3.Upload,
+			Download: s3.Download,
+			Delete:   s3.Delete,
+			provider: providerType,
+		}, nil
 
 	case types.R2:
-		provider, err = r2.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create r2 provider: %w", err)
-		}
+		return &Provider{
+			Upload:   r2.Upload,
+			Download: r2.Download,
+			Delete:   r2.Delete,
+			provider: providerType,
+		}, nil
 
 	case types.GCS:
-		provider, err = gcs.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create gcs provider: %w", err)
-		}
+		return &Provider{
+			Upload:   gcs.Upload,
+			Download: gcs.Download,
+			Delete:   gcs.Delete,
+			provider: providerType,
+		}, nil
 
 	case types.Local:
-		provider, err = local.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create local provider: %w", err)
-		}
+		return &Provider{
+			Upload:   local.Upload,
+			Download: local.Download,
+			Delete:   local.Delete,
+			provider: providerType,
+		}, nil
 
 	default:
 		return nil, errUnsupportedProviderType
 	}
-
-	return &ProviderManager{provider: provider}, nil
-}
-
-func (pm *ProviderManager) Upload(ctx context.Context, file *types.File) (*types.File, error) {
-	uploadedFile, err := pm.provider.Upload(ctx, file)
-	if err != nil {
-		return nil, fmt.Errorf("provider manager: failed to upload file: %w", err)
-	}
-
-	return uploadedFile, nil
 }

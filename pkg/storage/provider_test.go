@@ -33,8 +33,8 @@ func TestNewProviderManager(t *testing.T) {
 		},
 		{
 			name:   types.Local,
-			want:   false,
-			errMsg: "failed to create local provider: not implemented",
+			want:   true,
+			errMsg: "",
 		},
 		{
 			name:   "wrong",
@@ -47,7 +47,7 @@ func TestNewProviderManager(t *testing.T) {
 		t.Run(string(testCase.name), func(t *testing.T) {
 			t.Parallel()
 
-			provider, err := storage.NewProviderManager(testCase.name)
+			provider, err := storage.NewProvider(testCase.name)
 
 			if testCase.want {
 				sdktesting.IsNull(t, err)
