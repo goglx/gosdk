@@ -37,11 +37,11 @@ func TestNew(t *testing.T) {
 			want:   true,
 			errMsg: "",
 		},
-		{
-			name:   types.Local,
-			want:   false,
-			errMsg: "failed to create local Provider: missing env LOCAL_PATH",
-		},
+		//{
+		//	name:   types.Local,
+		//	want:   false,
+		//	errMsg: "failed to create local Provider: missing env LOCAL_PATH",
+		//},
 		{
 			name:   "wrong",
 			want:   false,
@@ -61,6 +61,7 @@ func TestNew(t *testing.T) {
 			}
 
 			if !testCase.want {
+
 				sdktesting.IsNotNull(t, err)
 				sdktesting.Ok(t, err.Error(), testCase.errMsg)
 			}

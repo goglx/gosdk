@@ -49,7 +49,7 @@ func New(providerType types.ProviderType) (*Manager, error) {
 		}
 
 	case types.Local:
-		provider, err = local.NewProvider()
+		provider, err = local.NewProvider(local.NewRealFileSystem())
 		if err != nil {
 			return nil, fmt.Errorf("failed to create local Provider: %w", err)
 		}
