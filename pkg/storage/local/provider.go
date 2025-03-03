@@ -10,10 +10,10 @@ import (
 
 type Provider struct {
 	Config *Config
-	FS     FileSystem
+	FS     fileSystem
 }
 
-type FileSystem interface {
+type fileSystem interface {
 	MkdirAll(path string, perm os.FileMode) error
 	Create(name string) (*os.File, error)
 }
