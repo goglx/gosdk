@@ -12,6 +12,7 @@ import (
 
 var errFailedToUpload = errors.New("failed to upload")
 var errFailedToDelete = errors.New("failed to delete")
+var errFailedToDownload = errors.New("failed to download")
 
 func TestNew(t *testing.T) {
 	t.Parallel()
@@ -182,5 +183,19 @@ func TestDownload(t *testing.T) {
 
 	t.Run("failed", func(t *testing.T) {
 		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload: nil,
+			mockDelete: nil,
+			mockDownload: func(ctx context.Context, key string) ([]byte, error) {
+				return nil, errFailedToDownload
+			},
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+
+		_, err := manager.Download(context.TODO(), "download-id")
+		sdktesting.IsNotNull(t, err)
+		sdktesting.Equals(t, err.Error(), "failed to download file download-id: failed to download")
 	})
 }
