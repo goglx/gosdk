@@ -44,7 +44,6 @@ func TestUpload_OK(t *testing.T) {
 	sdktesting.IsNull(t, err)
 	sdktesting.IsNotNull(t, upload)
 	sdktesting.Equals(t, upload.ID, "test-id")
-
 }
 
 func TestNewProvider(t *testing.T) {
