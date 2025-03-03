@@ -18,8 +18,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    env:
-      LOCAL_PATH: "./"
     steps:
       - uses: actions/checkout@v4
 

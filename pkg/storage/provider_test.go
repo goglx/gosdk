@@ -3,6 +3,7 @@ package storage_test
 import (
 	"context"
 	"errors"
+	"os"
 	"testing"
 
 	sdktesting "gosdk/internal/testing"
@@ -40,7 +41,12 @@ func TestNew(t *testing.T) {
 		{
 			name:   types.Local,
 			want:   false,
-			errMsg: "failed to create local Provider: not implemented",
+			errMsg: "failed to create local Provider: missing env LOCAL_PATH",
+		},
+		{
+			name:   types.Local,
+			want:   true,
+			errMsg: "",
 		},
 		{
 			name:   "wrong",
@@ -52,6 +58,16 @@ func TestNew(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(string(testCase.name), func(t *testing.T) {
 			t.Parallel()
+
+			if testCase.want {
+				err := os.Setenv("LOCAL_PATH", "/tmp")
+				sdktesting.IsNull(t, err)
+			}
+
+			if !testCase.want {
+				err := os.Unsetenv("LOCAL_PATH")
+				sdktesting.IsNull(t, err)
+			}
 
 			provider, err := storage.New(testCase.name)
 

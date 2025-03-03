@@ -29,13 +29,11 @@ func setupEnv() error {
 func TestNewProvider(t *testing.T) {
 	t.Parallel()
 
-	if err := setupEnv(); err != nil {
-		t.Logf("Failed to setup provider: %v", err)
-		t.Fail()
-	}
-
 	t.Run("success", func(t *testing.T) {
 		t.Parallel()
+
+		err := os.Setenv("LOCAL_PATH", "/tmp")
+		sdktesting.IsNull(t, err)
 
 		localProvider, err := local.NewProvider()
 		sdktesting.IsNull(t, err)
@@ -45,7 +43,10 @@ func TestNewProvider(t *testing.T) {
 	t.Run("failed", func(t *testing.T) {
 		t.Parallel()
 
-		_, err := local.NewProvider()
+		err := os.Unsetenv("LOCAL_PATH")
+		sdktesting.IsNull(t, err)
+
+		_, err = local.NewProvider()
 		sdktesting.IsNotNull(t, err)
 		sdktesting.Equals(t, err.Error(), "missing env LOCAL_PATH")
 	})
