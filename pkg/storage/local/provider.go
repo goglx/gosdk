@@ -3,16 +3,22 @@ package local
 import (
 	"context"
 	"errors"
-
 	"gosdk/internal/types"
+	"os"
 )
 
-var errNotImplemented = errors.New("not implemented")
+var errMissingLocalPath = errors.New("missing env LOCAL_PATH")
 
-type Provider struct{}
+type Provider struct {
+	basePath string
+}
 
 func NewProvider() (*Provider, error) {
-	return nil, errNotImplemented
+	if os.Getenv("LOCAL_PATH") == "" {
+		return nil, errMissingLocalPath
+	}
+
+	return &Provider{basePath: os.Getenv("LOCAL_PATH")}, nil
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
