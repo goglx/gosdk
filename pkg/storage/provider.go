@@ -20,11 +20,11 @@ type provider interface {
 	Delete(ctx context.Context, key string) error
 }
 
-type ProviderManager struct {
+type Manager struct {
 	provider provider
 }
 
-func NewProviderManager(providerType types.ProviderType) (*ProviderManager, error) {
+func New(providerType types.ProviderType) (*Manager, error) {
 	var provider provider
 
 	var err error
@@ -58,10 +58,10 @@ func NewProviderManager(providerType types.ProviderType) (*ProviderManager, erro
 		return nil, errUnsupportedProviderType
 	}
 
-	return &ProviderManager{provider: provider}, nil
+	return &Manager{provider: provider}, nil
 }
 
-func (pm *ProviderManager) Upload(ctx context.Context, file *types.File) (*types.File, error) {
+func (pm *Manager) Upload(ctx context.Context, file *types.File) (*types.File, error) {
 	result, err := pm.provider.Upload(ctx, file)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload file %s: %w", file.ID, err)
@@ -70,7 +70,7 @@ func (pm *ProviderManager) Upload(ctx context.Context, file *types.File) (*types
 	return result, nil
 }
 
-func (pm *ProviderManager) Download(ctx context.Context, key string) ([]byte, error) {
+func (pm *Manager) Download(ctx context.Context, key string) ([]byte, error) {
 	result, err := pm.provider.Download(ctx, key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download file %s: %w", key, err)
@@ -79,7 +79,7 @@ func (pm *ProviderManager) Download(ctx context.Context, key string) ([]byte, er
 	return result, nil
 }
 
-func (pm *ProviderManager) Delete(ctx context.Context, key string) error {
+func (pm *Manager) Delete(ctx context.Context, key string) error {
 	err := pm.provider.Delete(ctx, key)
 	if err != nil {
 		return fmt.Errorf("failed to delete file %s: %w", key, err)

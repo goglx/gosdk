@@ -47,7 +47,7 @@ func TestNewProviderManager(t *testing.T) {
 		t.Run(string(testCase.name), func(t *testing.T) {
 			t.Parallel()
 
-			provider, err := storage.NewProviderManager(testCase.name)
+			provider, err := storage.New(testCase.name)
 
 			if testCase.want {
 				sdktesting.IsNull(t, err)
