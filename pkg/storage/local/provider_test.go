@@ -34,7 +34,7 @@ func TestUpload_OK(t *testing.T) {
 		},
 	}
 
-	provider := mockNewProvider(mockNewConfig(), mockFS)
+	provider := newMockProvider(newMockConfig(), mockFS)
 	upload, err := provider.Upload(context.Background(), &types.File{
 		ID:          "test-id",
 		Data:        []byte("test-id"),

@@ -23,12 +23,12 @@ func (fs *mockFileSystem) Create(name string) (*os.File, error) {
 	return fs.createFunc(name)
 }
 
-func mockNewConfig() *mockConfig {
+func newMockConfig() *mockConfig {
 	return &mockConfig{
 		LocalPath: "test",
 	}
 }
 
-func mockNewProvider(config *mockConfig, fs *mockFileSystem) *local.Provider {
+func newMockProvider(config *mockConfig, fs *mockFileSystem) *local.Provider {
 	return &local.Provider{Config: (*local.Config)(config), FS: fs}
 }
