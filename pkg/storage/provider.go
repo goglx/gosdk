@@ -26,26 +26,27 @@ type ProviderManager struct {
 
 func NewProviderManager(providerType types.ProviderType) (*ProviderManager, error) {
 	var provider Provider
+
 	var err error
 
 	switch providerType {
 	case types.S3:
 		provider, err = s3.NewProvider()
-		//if err != nil {
-		//	return nil, fmt.Errorf("failed to create s3 provider: %w", err)
-		//}
+		if err != nil {
+			return nil, fmt.Errorf("failed to create s3 provider: %w", err)
+		}
 
 	case types.R2:
 		provider, err = r2.NewProvider()
-		//if err != nil {
-		//	return nil, fmt.Errorf("failed to create r2 provider: %w", err)
-		//}
+		if err != nil {
+			return nil, fmt.Errorf("failed to create r2 provider: %w", err)
+		}
 
 	case types.GCS:
 		provider, err = gcs.NewProvider()
-		//if err != nil {
-		//	return nil, fmt.Errorf("failed to create gcs provider: %w", err)
-		//}
+		if err != nil {
+			return nil, fmt.Errorf("failed to create gcs provider: %w", err)
+		}
 
 	case types.Local:
 		provider, err = local.NewProvider()
@@ -57,44 +58,5 @@ func NewProviderManager(providerType types.ProviderType) (*ProviderManager, erro
 		return nil, errUnsupportedProviderType
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
 	return &ProviderManager{provider: provider}, nil
-}
-
-func NewProvider(providerType types.ProviderType) (Provider, error) {
-	switch providerType {
-	case types.S3:
-		provider, err := s3.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create s3 provider: %w", err)
-		}
-
-		return provider, nil
-	case types.R2:
-		provider, err := r2.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create r2 provider: %w", err)
-		}
-
-		return provider, nil
-	case types.GCS:
-		provider, err := gcs.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create gcs provider: %w", err)
-		}
-
-		return provider, nil
-	case types.Local:
-		provider, err := local.NewProvider()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create local provider: %w", err)
-		}
-
-		return provider, nil
-	default:
-		return nil, errUnsupportedProviderType
-	}
 }
