@@ -85,8 +85,8 @@ func (mp *mockProvider) Delete(ctx context.Context, key string) error {
 }
 
 // NewMock is a helper function to create a Manager with a mock Provider.
-func newMock(mockProvider storage.Provider) (*storage.Manager, error) {
-	return &storage.Manager{Provider: mockProvider}, nil
+func newMock(mockProvider storage.Provider) *storage.Manager {
+	return &storage.Manager{Provider: mockProvider}
 }
 
 func TestUpload(t *testing.T) {
@@ -103,8 +103,7 @@ func TestUpload(t *testing.T) {
 			mockDownload: nil,
 		}
 
-		manager, err := newMock(provider)
-		sdktesting.IsNull(t, err)
+		manager := newMock(provider)
 		sdktesting.IsNotNull(t, manager)
 		sdktesting.IsNotNull(t, manager.Provider)
 
@@ -130,10 +129,10 @@ func TestUpload(t *testing.T) {
 			mockDownload: nil,
 		}
 
-		manager, err := newMock(provider)
-		sdktesting.IsNull(t, err)
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
 
-		_, err = manager.Upload(context.TODO(), &types.File{
+		_, err := manager.Upload(context.TODO(), &types.File{
 			ID:          "upload-id",
 			ContentType: "text/plain",
 			Data:        []byte("test-upload"),
