@@ -12,7 +12,7 @@ import (
 
 var errFailedToUpload = errors.New("failed to upload")
 
-func TestNewProviderManager(t *testing.T) {
+func TestNew(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
