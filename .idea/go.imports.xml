@@ -3,6 +3,7 @@
   <component name="GoImports">
     <option name="excludedPackages">
       <array>
+        <option value="gosdk/pkg/storage/local" />
         <option value="testing" />
       </array>
     </option>

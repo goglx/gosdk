@@ -40,7 +40,7 @@ func TestNew(t *testing.T) {
 		{
 			name:   types.Local,
 			want:   false,
-			errMsg: "failed to create local Provider: not implemented",
+			errMsg: "failed to create local Provider: missing env LOCAL_PATH",
 		},
 		{
 			name:   "wrong",
@@ -52,6 +52,40 @@ func TestNew(t *testing.T) {
 	for _, testCase := range tests {
 		t.Run(string(testCase.name), func(t *testing.T) {
 			t.Parallel()
+
+			provider, err := storage.New(testCase.name)
+
+			if testCase.want {
+				sdktesting.IsNull(t, err)
+				sdktesting.IsNotNull(t, provider)
+			}
+
+			if !testCase.want {
+				sdktesting.IsNotNull(t, err)
+				sdktesting.Ok(t, err.Error(), testCase.errMsg)
+			}
+		})
+	}
+}
+
+func TestNewLocalProvider(t *testing.T) {
+	t.Setenv("LOCAL_PATH", "")
+
+	tests := []struct {
+		name   types.ProviderType
+		want   bool
+		errMsg string
+	}{
+		{
+			name:   types.Local,
+			want:   true,
+			errMsg: "",
+		},
+	}
+
+	for _, testCase := range tests {
+		t.Run(string(testCase.name), func(t *testing.T) {
+			t.Setenv("LOCAL_PATH", "/tmp")
 
 			provider, err := storage.New(testCase.name)
 
