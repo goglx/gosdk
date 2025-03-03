@@ -3,8 +3,9 @@ package local
 import (
 	"context"
 	"fmt"
-	"gosdk/internal/types"
 	"os"
+
+	"gosdk/internal/types"
 )
 
 type Provider struct {
@@ -20,20 +21,25 @@ type FileSystem interface {
 type RealFileSystem struct{}
 
 func (fs *RealFileSystem) MkdirAll(path string, perm os.FileMode) error {
-	return os.MkdirAll(path, perm)
+	err := os.MkdirAll(path, perm)
+	if err != nil {
+		return fmt.Errorf("local storage provider, %w", err)
+	}
+
+	return nil
 }
 
 func (fs *RealFileSystem) Create(name string) (*os.File, error) {
-	return os.Create(name)
+	create, err := os.Create(name)
+	if err != nil {
+		return nil, fmt.Errorf("local storage provider, %w", err)
+	}
+
+	return create, nil
 }
 
-func NewRealFileSystem() *RealFileSystem {
-	return &RealFileSystem{}
-}
-
-func NewProvider(fs FileSystem) (*Provider, error) {
-	config := NewConfig()
-	return &Provider{Config: config, FS: fs}, nil
+func NewProvider() (*Provider, error) {
+	return &Provider{Config: NewConfig(), FS: &RealFileSystem{}}, nil
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {

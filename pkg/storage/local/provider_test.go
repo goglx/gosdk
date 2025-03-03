@@ -2,14 +2,17 @@ package local_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
+	"testing"
+
 	sdktesting "gosdk/internal/testing"
 	"gosdk/internal/types"
-	"os"
-
 	"gosdk/pkg/storage/local"
-	"testing"
 )
+
+var errInvalidFileName = errors.New("invalid file name")
 
 type mockFileSystem struct {
 	MkdirAllFunc func(path string, perm os.FileMode) error
@@ -52,7 +55,7 @@ func TestUpload(t *testing.T) {
 
 		CreateFunc: func(name string) (*os.File, error) {
 			if name != "test/test-id" {
-				return nil, fmt.Errorf("expected name %s, got %s", "test", name)
+				return nil, fmt.Errorf("%w expected name test/test-id, got %s", errInvalidFileName, name)
 			}
 
 			return os.NewFile(1, name), nil

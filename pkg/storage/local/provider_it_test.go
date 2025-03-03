@@ -1,9 +1,9 @@
 package local_test
 
 import (
-	sdktesting "gosdk/internal/testing"
 	"testing"
 
+	sdktesting "gosdk/internal/testing"
 	"gosdk/pkg/storage/local"
 )
 
@@ -11,8 +11,7 @@ func TestITNewProvider(t *testing.T) {
 	t.Run("ok", func(t *testing.T) {
 		t.Setenv("LOCAL_PATH", "/tmp")
 
-		fs := local.NewRealFileSystem()
-		localProvider, err := local.NewProvider(fs)
+		localProvider, err := local.NewProvider()
 
 		sdktesting.IsNull(t, err)
 		sdktesting.IsNotNull(t, localProvider)
@@ -35,8 +34,7 @@ func TestITNewProvider(t *testing.T) {
 			}
 		}()
 
-		fs := local.NewRealFileSystem()
-		_, err := local.NewProvider(fs)
+		_, err := local.NewProvider()
 		sdktesting.IsNotNull(t, err)
 	})
 }
