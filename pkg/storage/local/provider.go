@@ -20,6 +20,12 @@ type fileSystem interface {
 
 type realFileSystem struct{}
 
+func NewProvider() (*Provider, error) {
+	config := NewConfig()
+
+	return &Provider{Config: config, FS: &realFileSystem{}}, nil
+}
+
 func (fs *realFileSystem) MkdirAll(path string, perm os.FileMode) error {
 	err := os.MkdirAll(path, perm)
 	if err != nil {
@@ -36,10 +42,6 @@ func (fs *realFileSystem) Create(name string) (*os.File, error) {
 	}
 
 	return create, nil
-}
-
-func NewProvider() (*Provider, error) {
-	return &Provider{Config: NewConfig(), FS: &realFileSystem{}}, nil
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {

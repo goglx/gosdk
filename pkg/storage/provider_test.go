@@ -40,7 +40,7 @@ func TestNew(t *testing.T) {
 		// {
 		//	name:   types.Local,
 		//	want:   false,
-		//	errMsg: "failed to create local Provider: missing env LOCAL_PATH",
+		//	errMsg: "failed to create local Provider: failed to initialize provider: config is nil",
 		// },
 		{
 			name:   "wrong",
