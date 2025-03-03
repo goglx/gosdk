@@ -3,7 +3,6 @@ package storage_test
 import (
 	"context"
 	"errors"
-	"os"
 	"testing"
 
 	sdktesting "gosdk/internal/testing"
@@ -44,11 +43,6 @@ func TestNew(t *testing.T) {
 			errMsg: "failed to create local Provider: missing env LOCAL_PATH",
 		},
 		{
-			name:   types.Local,
-			want:   true,
-			errMsg: "",
-		},
-		{
 			name:   "wrong",
 			want:   false,
 			errMsg: "unsupported Provider type",
@@ -59,15 +53,39 @@ func TestNew(t *testing.T) {
 		t.Run(string(testCase.name), func(t *testing.T) {
 			t.Parallel()
 
+			provider, err := storage.New(testCase.name)
+
 			if testCase.want {
-				err := os.Setenv("LOCAL_PATH", "/tmp")
 				sdktesting.IsNull(t, err)
+				sdktesting.IsNotNull(t, provider)
 			}
 
 			if !testCase.want {
-				err := os.Unsetenv("LOCAL_PATH")
-				sdktesting.IsNull(t, err)
+				sdktesting.IsNotNull(t, err)
+				sdktesting.Ok(t, err.Error(), testCase.errMsg)
 			}
+		})
+	}
+}
+
+func TestNewLocalProvider(t *testing.T) {
+	t.Setenv("LOCAL_PATH", "")
+
+	tests := []struct {
+		name   types.ProviderType
+		want   bool
+		errMsg string
+	}{
+		{
+			name:   types.Local,
+			want:   true,
+			errMsg: "",
+		},
+	}
+
+	for _, testCase := range tests {
+		t.Run(string(testCase.name), func(t *testing.T) {
+			t.Setenv("LOCAL_PATH", "/tmp")
 
 			provider, err := storage.New(testCase.name)
 
