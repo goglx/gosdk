@@ -132,7 +132,6 @@ func TestDelete(t *testing.T) {
 			mockDelete:   func(ctx context.Context, key string) error { return nil },
 			mockDownload: nil,
 		}
-
 		manager := newMock(provider)
 		sdktesting.IsNotNull(t, manager)
 		sdktesting.IsNotNull(t, manager.Provider)
@@ -156,5 +155,32 @@ func TestDelete(t *testing.T) {
 		err := manager.Delete(context.TODO(), "delete-file-id")
 		sdktesting.IsNotNull(t, err)
 		sdktesting.Equals(t, err.Error(), "failed to delete file delete-file-id: failed to delete")
+	})
+}
+
+func TestDownload(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload: nil,
+			mockDelete: nil,
+			mockDownload: func(ctx context.Context, key string) ([]byte, error) {
+				return []byte("test-download"), nil
+			},
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+		sdktesting.IsNotNull(t, manager.Provider)
+
+		download, err := manager.Download(context.TODO(), "test-download")
+		sdktesting.IsNull(t, err)
+		sdktesting.Equals(t, string(download), "test-download")
+	})
+
+	t.Run("failed", func(t *testing.T) {
+		t.Parallel()
 	})
 }
