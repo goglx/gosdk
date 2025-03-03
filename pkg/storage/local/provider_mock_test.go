@@ -32,3 +32,10 @@ func newMockConfig() *mockConfig {
 func newMockProvider(config *mockConfig, fs *mockFileSystem) *local.Provider {
 	return &local.Provider{Config: (*local.Config)(config), FS: fs}
 }
+
+func newMockFileSystem() *mockFileSystem {
+	return &mockFileSystem{
+		mkdirAllFunc: nil,
+		createFunc:   nil,
+	}
+}

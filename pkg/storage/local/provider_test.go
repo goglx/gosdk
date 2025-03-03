@@ -14,24 +14,23 @@ import (
 
 var errInvalidFileName = errors.New("invalid file name")
 
-func TestUpload_OK(t *testing.T) {
+func TestProvider_Upload(t *testing.T) {
 	t.Parallel()
 
-	mockFS := &mockFileSystem{
-		mkdirAllFunc: func(path string, perm os.FileMode) error {
-			if path != "test" {
-				t.Errorf("expected path %s, got %s", "expected/path", path)
-			}
+	mockFS := newMockFileSystem()
+	mockFS.mkdirAllFunc = func(path string, perm os.FileMode) error {
+		if path != "test" {
+			t.Errorf("expected path %s, got %s", "expected/path", path)
+		}
 
-			return nil
-		},
-		createFunc: func(name string) (*os.File, error) {
-			if name != "test/test-id" {
-				return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
-			}
+		return nil
+	}
+	mockFS.createFunc = func(name string) (*os.File, error) {
+		if name != "test/test-id" {
+			return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
+		}
 
-			return os.NewFile(1, name), nil
-		},
+		return os.NewFile(1, name), nil
 	}
 
 	provider := newMockProvider(newMockConfig(), mockFS)
