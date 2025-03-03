@@ -23,17 +23,17 @@ func NewProvider() (*Provider, error) {
 	}, nil
 }
 
-func Upload(ctx context.Context, file *types.File) (*types.File, error) {
+func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
 	// TODO implement me
 	panic(debug())
 }
 
-func Download(ctx context.Context, key string) ([]byte, error) {
+func (p *Provider) Download(ctx context.Context, key string) ([]byte, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func Delete(ctx context.Context, key string) error {
+func (p *Provider) Delete(ctx context.Context, key string) error {
 	// TODO implement me
 	panic("implement me")
 }
