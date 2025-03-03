@@ -15,16 +15,16 @@ import (
 var errInvalidFileName = errors.New("invalid file name")
 
 type mockFileSystem struct {
-	MkdirAllFunc func(path string, perm os.FileMode) error
-	CreateFunc   func(name string) (*os.File, error)
+	mkdirAllFunc func(path string, perm os.FileMode) error
+	createFunc   func(name string) (*os.File, error)
 }
 
 func (fs *mockFileSystem) MkdirAll(path string, perm os.FileMode) error {
-	return fs.MkdirAllFunc(path, perm)
+	return fs.mkdirAllFunc(path, perm)
 }
 
 func (fs *mockFileSystem) Create(name string) (*os.File, error) {
-	return fs.CreateFunc(name)
+	return fs.createFunc(name)
 }
 
 type mockConfig struct {
@@ -45,7 +45,7 @@ func TestUpload(t *testing.T) {
 	t.Parallel()
 
 	mockFS := &mockFileSystem{
-		MkdirAllFunc: func(path string, perm os.FileMode) error {
+		mkdirAllFunc: func(path string, perm os.FileMode) error {
 			if path != "test" {
 				t.Errorf("expected path %s, got %s", "expected/path", path)
 			}
@@ -53,9 +53,9 @@ func TestUpload(t *testing.T) {
 			return nil
 		},
 
-		CreateFunc: func(name string) (*os.File, error) {
+		createFunc: func(name string) (*os.File, error) {
 			if name != "test/test-id" {
-				return nil, fmt.Errorf("%w expected name test/test-id, got %s", errInvalidFileName, name)
+				return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
 			}
 
 			return os.NewFile(1, name), nil
