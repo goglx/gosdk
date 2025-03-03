@@ -82,7 +82,7 @@ func (mp *mockProvider) Delete(ctx context.Context, key string) error {
 	return mp.mockDelete(ctx, key)
 }
 
-// NewMock is a helper function to create a Manager with a mock Provider
+// NewMock is a helper function to create a Manager with a mock Provider.
 func newMock(mockProvider storage.Provider) (*storage.Manager, error) {
 	return &storage.Manager{Provider: mockProvider}, nil
 }
