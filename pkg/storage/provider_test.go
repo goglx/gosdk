@@ -10,6 +10,8 @@ import (
 	"gosdk/pkg/storage"
 )
 
+var errFailedToUpload = errors.New("failed to upload")
+
 func TestNewProviderManager(t *testing.T) {
 	t.Parallel()
 
@@ -122,7 +124,7 @@ func TestUpload(t *testing.T) {
 
 		provider := &mockProvider{
 			mockUpload: func(ctx context.Context, file *types.File) (*types.File, error) {
-				return nil, errors.New("failed to upload")
+				return nil, errFailedToUpload
 			},
 			mockDelete:   nil,
 			mockDownload: nil,
