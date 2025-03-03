@@ -60,3 +60,12 @@ func NewProviderManager(providerType types.ProviderType) (*ProviderManager, erro
 
 	return &ProviderManager{provider: provider}, nil
 }
+
+func (pm *ProviderManager) Upload(ctx context.Context, file *types.File) (*types.File, error) {
+	uploadedFile, err := pm.provider.Upload(ctx, file)
+	if err != nil {
+		return nil, fmt.Errorf("provider manager: failed to upload file: %w", err)
+	}
+
+	return uploadedFile, nil
+}
