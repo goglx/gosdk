@@ -3,8 +3,9 @@ package local
 import (
 	"context"
 	"errors"
-	"gosdk/internal/types"
 	"os"
+
+	"gosdk/internal/types"
 )
 
 var errMissingLocalPath = errors.New("missing env LOCAL_PATH")

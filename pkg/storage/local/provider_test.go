@@ -1,6 +1,7 @@
 package local_test
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -9,10 +10,12 @@ import (
 	"gosdk/pkg/storage/local"
 )
 
+var errMissingEnvironmentVariable = errors.New("missing environment variable")
+
 func checkEnvVariables(provider string, variables []string) error {
 	for _, v := range variables {
 		if os.Getenv(v) == "" {
-			return fmt.Errorf("missing %s environment variable %s", provider, v)
+			return fmt.Errorf("%w: %s provider, variable %s", errMissingEnvironmentVariable, provider, v)
 		}
 	}
 
