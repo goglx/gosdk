@@ -35,7 +35,7 @@ func newMockProvider(config *mockConfig, fs *mockFileSystem) *local.Provider {
 
 func newMockFileSystem() *mockFileSystem {
 	return &mockFileSystem{
-		mkdirAllFunc: nil,
-		createFunc:   nil,
+		mkdirAllFunc: func(path string, perm os.FileMode) error { return nil },
+		createFunc:   func(name string) (*os.File, error) { return nil, nil },
 	}
 }

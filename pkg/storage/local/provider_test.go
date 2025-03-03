@@ -30,19 +30,37 @@ func TestProvider_Upload(t *testing.T) {
 			return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
 		}
 
-		return os.NewFile(1, name), nil
+		return os.CreateTemp(t.TempDir(), "test-id")
 	}
 
 	provider := newMockProvider(newMockConfig(), mockFS)
-	upload, err := provider.Upload(context.Background(), &types.File{
-		ID:          "test-id",
-		Data:        []byte("test-id"),
-		ContentType: "text/plain",
+
+	t.Run("ok", func(t *testing.T) {
+		t.Parallel()
+
+		upload, err := provider.Upload(context.Background(), &types.File{
+			ID:          "test-id",
+			Data:        []byte("test-id"),
+			ContentType: "text/plain",
+		})
+
+		sdktesting.IsNull(t, err)
+		sdktesting.IsNotNull(t, upload)
+		sdktesting.Equals(t, upload.ID, "test-id")
 	})
 
-	sdktesting.IsNull(t, err)
-	sdktesting.IsNotNull(t, upload)
-	sdktesting.Equals(t, upload.ID, "test-id")
+	t.Run("failed", func(t *testing.T) {
+		t.Parallel()
+
+		_, err := provider.Upload(context.Background(), &types.File{
+			ID:          "wrong",
+			Data:        []byte("wrong"),
+			ContentType: "text/plain",
+		})
+
+		sdktesting.IsNotNull(t, err)
+		sdktesting.Equals(t, err.Error(), "error creating file, invalid file name expected name got test/wrong")
+	})
 }
 
 func TestNewProvider(t *testing.T) {
