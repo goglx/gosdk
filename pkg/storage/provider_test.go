@@ -11,31 +11,10 @@ import (
 )
 
 var errFailedToUpload = errors.New("failed to upload")
+var errFailedToDelete = errors.New("failed to delete")
+var errFailedToDownload = errors.New("failed to download")
 
-type mockProvider struct {
-	mockUpload   func(ctx context.Context, file *types.File) (*types.File, error)
-	mockDownload func(ctx context.Context, key string) ([]byte, error)
-	mockDelete   func(ctx context.Context, key string) error
-}
-
-func (mp *mockProvider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
-	return mp.mockUpload(ctx, file)
-}
-
-func (mp *mockProvider) Download(ctx context.Context, key string) ([]byte, error) {
-	return mp.mockDownload(ctx, key)
-}
-
-func (mp *mockProvider) Delete(ctx context.Context, key string) error {
-	return mp.mockDelete(ctx, key)
-}
-
-// NewMock is a helper function to create a Manager with a mock Provider.
-func newMock(mockProvider storage.Provider) *storage.Manager {
-	return &storage.Manager{Provider: mockProvider}
-}
-
-func TestNewProviderManager(t *testing.T) {
+func TestNew(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -140,5 +119,83 @@ func TestUpload(t *testing.T) {
 
 		sdktesting.IsNotNull(t, err)
 		sdktesting.Equals(t, err.Error(), "failed to upload file upload-id: failed to upload")
+	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload:   nil,
+			mockDelete:   func(ctx context.Context, key string) error { return nil },
+			mockDownload: nil,
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+		sdktesting.IsNotNull(t, manager.Provider)
+
+		err := manager.Delete(context.TODO(), "delete-file")
+
+		sdktesting.IsNull(t, err)
+	})
+
+	t.Run("failed", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload:   nil,
+			mockDelete:   func(ctx context.Context, key string) error { return errFailedToDelete },
+			mockDownload: nil,
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+
+		err := manager.Delete(context.TODO(), "delete-file-id")
+		sdktesting.IsNotNull(t, err)
+		sdktesting.Equals(t, err.Error(), "failed to delete file delete-file-id: failed to delete")
+	})
+}
+
+func TestDownload(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload: nil,
+			mockDelete: nil,
+			mockDownload: func(ctx context.Context, key string) ([]byte, error) {
+				return []byte("test-download"), nil
+			},
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+		sdktesting.IsNotNull(t, manager.Provider)
+
+		download, err := manager.Download(context.TODO(), "test-download")
+		sdktesting.IsNull(t, err)
+		sdktesting.Equals(t, string(download), "test-download")
+	})
+
+	t.Run("failed", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload: nil,
+			mockDelete: nil,
+			mockDownload: func(ctx context.Context, key string) ([]byte, error) {
+				return nil, errFailedToDownload
+			},
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+
+		_, err := manager.Download(context.TODO(), "download-id")
+		sdktesting.IsNotNull(t, err)
+		sdktesting.Equals(t, err.Error(), "failed to download file download-id: failed to download")
 	})
 }
