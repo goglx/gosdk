@@ -11,6 +11,7 @@ import (
 )
 
 var errFailedToUpload = errors.New("failed to upload")
+var errFailedToDelete = errors.New("failed to delete")
 
 func TestNew(t *testing.T) {
 	t.Parallel()
@@ -117,5 +118,43 @@ func TestUpload(t *testing.T) {
 
 		sdktesting.IsNotNull(t, err)
 		sdktesting.Equals(t, err.Error(), "failed to upload file upload-id: failed to upload")
+	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Parallel()
+
+	t.Run("success", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload:   nil,
+			mockDelete:   func(ctx context.Context, key string) error { return nil },
+			mockDownload: nil,
+		}
+
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+		sdktesting.IsNotNull(t, manager.Provider)
+
+		err := manager.Delete(context.TODO(), "delete-file")
+
+		sdktesting.IsNull(t, err)
+	})
+
+	t.Run("failed", func(t *testing.T) {
+		t.Parallel()
+
+		provider := &mockProvider{
+			mockUpload:   nil,
+			mockDelete:   func(ctx context.Context, key string) error { return errFailedToDelete },
+			mockDownload: nil,
+		}
+		manager := newMock(provider)
+		sdktesting.IsNotNull(t, manager)
+
+		err := manager.Delete(context.TODO(), "delete-file-id")
+		sdktesting.IsNotNull(t, err)
+		sdktesting.Equals(t, err.Error(), "failed to delete file delete-file-id: failed to delete")
 	})
 }
