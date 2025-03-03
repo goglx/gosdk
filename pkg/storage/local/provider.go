@@ -18,9 +18,9 @@ type FileSystem interface {
 	Create(name string) (*os.File, error)
 }
 
-type RealFileSystem struct{}
+type realFileSystem struct{}
 
-func (fs *RealFileSystem) MkdirAll(path string, perm os.FileMode) error {
+func (fs *realFileSystem) MkdirAll(path string, perm os.FileMode) error {
 	err := os.MkdirAll(path, perm)
 	if err != nil {
 		return fmt.Errorf("local storage provider, %w", err)
@@ -29,7 +29,7 @@ func (fs *RealFileSystem) MkdirAll(path string, perm os.FileMode) error {
 	return nil
 }
 
-func (fs *RealFileSystem) Create(name string) (*os.File, error) {
+func (fs *realFileSystem) Create(name string) (*os.File, error) {
 	create, err := os.Create(name)
 	if err != nil {
 		return nil, fmt.Errorf("local storage provider, %w", err)
@@ -39,7 +39,7 @@ func (fs *RealFileSystem) Create(name string) (*os.File, error) {
 }
 
 func NewProvider() (*Provider, error) {
-	return &Provider{Config: NewConfig(), FS: &RealFileSystem{}}, nil
+	return &Provider{Config: NewConfig(), FS: &realFileSystem{}}, nil
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
