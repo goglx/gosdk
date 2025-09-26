@@ -13,12 +13,14 @@ import (
 func main() {
 	err := os.Setenv("LOCAL_PATH", "./")
 	if err != nil {
-		return
+		slog.Error("failed to set LOCAL_PATH environment variable", "error", err)
+		os.Exit(1)
 	}
 
 	provider, err := local.NewProvider()
 	if err != nil {
-		return
+		slog.Error("failed to create local provider", "error", err)
+		os.Exit(1)
 	}
 
 	file, err := provider.Upload(context.TODO(), &types.File{
@@ -27,14 +29,16 @@ func main() {
 		ContentType: "text/plain",
 	})
 	if err != nil {
-		return
+		slog.Error("failed to upload file with local provider", "error", err)
+		os.Exit(1)
 	}
 
 	slog.Info(file.ID)
 
 	manager, err := storage.New(types.Local)
 	if err != nil {
-		return
+		slog.Error("failed to create storage manager", "error", err)
+		os.Exit(1)
 	}
 
 	upload, err := manager.Upload(context.TODO(), &types.File{
@@ -43,7 +47,8 @@ func main() {
 		ContentType: "text/plain",
 	})
 	if err != nil {
-		return
+		slog.Error("upload failed", "error", err)
+		os.Exit(1)
 	}
 
 	slog.Info(upload.ID)
