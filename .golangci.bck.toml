@@ -1,0 +1,15 @@
+[linters-settings.lll]
+line-length = 120
+
+[linters]
+enable-all = true
+disable = [
+    "tenv",
+    "godox",
+    "gofumpt"
+]
+
+[linters-settings.revive]
+rules = [
+    {name = "unused-parameter", disabled = true}
+]

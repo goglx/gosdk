@@ -1,15 +1,49 @@
-[linters-settings.lll]
-line-length = 120
+version = '2'
 
 [linters]
-enable-all = true
+default = 'all'
 disable = [
-    "tenv",
-    "godox",
-    "gofumpt"
+  'godox',
+  'wsl'
+]
+enable = [
+    'wsl_v5'
 ]
 
-[linters-settings.revive]
-rules = [
-    {name = "unused-parameter", disabled = true}
+[linters.settings]
+[linters.settings.lll]
+line-length = 120
+
+[linters.settings.revive]
+[[linters.settings.revive.rules]]
+name = 'unused-parameter'
+disabled = true
+
+[linters.exclusions]
+generated = 'lax'
+presets = [
+  'comments',
+  'common-false-positives',
+  'legacy',
+  'std-error-handling'
+]
+paths = [
+  'third_party$',
+  'builtin$',
+  'examples$'
+]
+
+[formatters]
+enable = [
+  'gci',
+  'gofmt',
+  'goimports'
+]
+
+[formatters.exclusions]
+generated = 'lax'
+paths = [
+  'third_party$',
+  'builtin$',
+  'examples$'
 ]
