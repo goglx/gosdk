@@ -58,7 +58,6 @@ func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, e
 	defer localFile.Close()
 
 	_, err = localFile.Write(file.Data)
-
 	if err != nil {
 		return nil, fmt.Errorf("error writing to file, %w", err)
 	}
