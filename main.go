@@ -52,4 +52,16 @@ func main() {
 	}
 
 	slog.Info(upload.ID)
+
+	upload, err = manager.Upload(context.TODO(), &types.File{
+		ID:          "./upload-dir/test-id-3",
+		Data:        []byte("test-id"),
+		ContentType: "text/plain",
+	})
+	if err != nil {
+		slog.Error("upload failed", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info(upload.ID)
 }
