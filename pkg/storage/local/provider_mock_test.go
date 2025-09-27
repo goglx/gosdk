@@ -25,7 +25,7 @@ func (fs *mockFileSystem) Create(name string) (*os.File, error) {
 
 func newMockConfig() *mockConfig {
 	return &mockConfig{
-		LocalPath: "test",
+		LocalPath: "./test",
 	}
 }
 

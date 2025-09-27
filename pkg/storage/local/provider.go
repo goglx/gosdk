@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gosdk/internal/types"
 )
@@ -45,7 +46,9 @@ func (fs *realFileSystem) Create(name string) (*os.File, error) {
 }
 
 func (p *Provider) Upload(ctx context.Context, file *types.File) (*types.File, error) {
-	err := p.FS.MkdirAll(p.Config.LocalPath, os.ModePerm)
+	path := p.Config.LocalPath + file.ID
+
+	err := p.FS.MkdirAll(filepath.Dir(path), os.ModePerm)
 	if err != nil {
 		return nil, fmt.Errorf("error creating directory, %w", err)
 	}

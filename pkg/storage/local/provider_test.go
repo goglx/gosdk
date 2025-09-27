@@ -19,14 +19,14 @@ func TestProvider_Upload(t *testing.T) {
 
 	mockFS := newMockFileSystem()
 	mockFS.mkdirAllFunc = func(path string, perm os.FileMode) error {
-		if path != "test" {
+		if path != "." {
 			t.Errorf("expected path %s, got %s", "expected/path", path)
 		}
 
 		return nil
 	}
 	mockFS.createFunc = func(name string) (*os.File, error) {
-		if name != "test/test-id" {
+		if name != "./test/test-id" {
 			return nil, fmt.Errorf("%w expected name got %s", errInvalidFileName, name)
 		}
 
@@ -59,7 +59,7 @@ func TestProvider_Upload(t *testing.T) {
 		})
 
 		sdktesting.IsNotNull(t, err)
-		sdktesting.Equals(t, err.Error(), "error creating file, invalid file name expected name got test/wrong")
+		sdktesting.Equals(t, err.Error(), "error creating file, invalid file name expected name got ./test/wrong")
 	})
 }
 
