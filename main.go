@@ -11,6 +11,12 @@ import (
 )
 
 func main() {
+	localProvider()
+}
+
+func localProvider() {
+	slog.Info("local provider")
+
 	err := os.Setenv("LOCAL_PATH", "./")
 	if err != nil {
 		slog.Error("failed to set LOCAL_PATH environment variable", "error", err)
