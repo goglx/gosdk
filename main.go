@@ -2,16 +2,63 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log/slog"
 	"os"
 
 	"gosdk/internal/types"
 	"gosdk/pkg/storage"
 	"gosdk/pkg/storage/local"
+	"gosdk/pkg/storage/s3"
 )
 
 func main() {
-	localProvider()
+	fileProvider := flag.String("file-provider", "", "storage provider to use (local or s3)")
+	s3FileProvider := flag.Bool("s3-file-provider", false, "run s3 file provider")
+	localFileProvider := flag.Bool("local-file-provider", false, "run local file provider")
+	flag.Parse()
+
+	switch *fileProvider {
+	case "local":
+		localProvider()
+	case "s3":
+		s3Provider()
+	default:
+		if *s3FileProvider {
+			s3Provider()
+		}
+
+		if *localFileProvider {
+			localProvider()
+		}
+
+		if !*s3FileProvider && !*localFileProvider && *fileProvider == "" {
+			slog.Error("Unknown file provider")
+			os.Exit(1)
+		}
+	}
+}
+
+func s3Provider() {
+	slog.Info("s3 provider")
+
+	provider, err := s3.NewProvider()
+	if err != nil {
+		slog.Error("failed to create s3 provider", "error", err)
+		os.Exit(1)
+	}
+
+	file, err := provider.Upload(context.TODO(), &types.File{
+		ID:          "test-s3-id",
+		Data:        []byte("test-s3-id"),
+		ContentType: "text/plain",
+	})
+	if err != nil {
+		slog.Error("failed to upload file with s3 provider", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info(file.ID)
 }
 
 func localProvider() {
