@@ -1,9 +1,12 @@
 package s3
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
+
+var ErrMissingEnv = errors.New("missing env")
 
 const s3URL = "https://%s.s3.%s.amazonaws.com/%s"
 
@@ -14,33 +17,42 @@ type Config struct {
 	region    string
 }
 
-func NewConfig() *Config {
-	bucket := os.Getenv("BUCKET_NAME")
-	if bucket == "" {
-		panic("missing env BUCKET_NAME")
+func NewConfig() (*Config, error) {
+	bucket, err := getEnv("BUCKET_NAME")
+	if err != nil {
+		return nil, err
 	}
 
-	region := os.Getenv("S3_REGION")
-	if region == "" {
-		panic("missing env S3_REGION")
+	region, err := getEnv("S3_REGION")
+	if err != nil {
+		return nil, err
 	}
 
-	accessKey := os.Getenv("S3_ACCESS_KEY")
-	if accessKey == "" {
-		panic("missing env S3_ACCESS_KEY")
+	accessKey, err := getEnv("S3_ACCESS_KEY")
+	if err != nil {
+		return nil, err
 	}
 
-	secretKey := os.Getenv("S3_SECRET_KEY")
-	if secretKey == "" {
-		panic("missing env S3_SECRET_KEY")
+	secretKey, err := getEnv("S3_SECRET_KEY")
+	if err != nil {
+		return nil, err
 	}
 
 	return &Config{
-		bucket,
-		region,
-		accessKey,
-		secretKey,
+		bucket:    bucket,
+		accessKey: accessKey,
+		secretKey: secretKey,
+		region:    region,
+	}, nil
+}
+
+func getEnv(key string) (string, error) {
+	value := os.Getenv(key)
+	if value == "" {
+		return "", fmt.Errorf("%w: %s", ErrMissingEnv, key)
 	}
+
+	return value, nil
 }
 
 func debug() string {
