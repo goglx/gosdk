@@ -38,11 +38,13 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
+	debug()
+
 	return &Config{
-		bucket:    bucket,
-		accessKey: accessKey,
-		secretKey: secretKey,
-		region:    region,
+		bucket,
+		accessKey,
+		secretKey,
+		region,
 	}, nil
 }
 
