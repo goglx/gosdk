@@ -42,6 +42,8 @@ func main() {
 func s3Provider() {
 	slog.Info("s3 provider")
 
+	slog.Info(os.Getenv("BUCKET_NAME"))
+
 	provider, err := s3.NewProvider()
 	if err != nil {
 		slog.Error("failed to create s3 provider", "error", err)
