@@ -10,13 +10,13 @@ import (
 	"gosdk/pkg/storage"
 )
 
-var errFailedToUpload = errors.New("failed to upload")
-var errFailedToDelete = errors.New("failed to delete")
-var errFailedToDownload = errors.New("failed to download")
+var (
+	errFailedToUpload   = errors.New("failed to upload")
+	errFailedToDelete   = errors.New("failed to delete")
+	errFailedToDownload = errors.New("failed to download")
+)
 
 func TestNew(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name   types.ProviderType
 		want   bool
@@ -51,7 +51,12 @@ func TestNew(t *testing.T) {
 
 	for _, testCase := range tests {
 		t.Run(string(testCase.name), func(t *testing.T) {
-			t.Parallel()
+			if testCase.name == types.S3 {
+				t.Setenv("BUCKET_NAME", "bucket_name")
+				t.Setenv("S3_REGION", "region")
+				t.Setenv("S3_ACCESS_KEY", "access_key")
+				t.Setenv("S3_SECRET_KEY", "secret_key")
+			}
 
 			provider, err := storage.New(testCase.name)
 
